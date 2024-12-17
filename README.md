@@ -66,4 +66,4 @@ Para ejecutar el sistema, asegúrate de tener instalados los siguientes componen
 ---
 
 ## Autores
-- Javier Melgarejo Teruel, Eduardo Giménez Gómez y Germán Gil Planes.
+- Javier Melgarejo Teruel, Eduardo Giménez Domínguez y Germán Gil Planes.
