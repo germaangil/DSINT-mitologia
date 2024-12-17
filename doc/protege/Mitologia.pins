@@ -1,0 +1,634 @@
+; Sun Nov 24 21:31:33 CET 2024
+; 
+;+ (version "3.4.8")
+;+ (build "Build 629")
+
+([KB_708716_Class33] of  Dios
+
+	(ataque 100)
+	(estado LIBRE)
+	(nombre "zeus")
+	(ubicacion OLIMPO))
+
+([KB_708716_Class35] of  Semidios
+
+	(ataque 30)
+	(esHeroe TRUE)
+	(esMortal TRUE)
+	(estado LIBRE)
+	(nombre "perseo")
+	(ubicacion ARGOS))
+
+([Mitologia_Class0] of  %3APAL-CONSTRAINT
+
+	(%3APAL-DESCRIPTION "Ningún personaje está libre y preso a la misma vez")
+	(%3APAL-NAME "NoLibreYPreso")
+	(%3APAL-STATEMENT "(forall ?LIBRE\n        (forall ?PRESO \n                (=> (and (own-slot-not-null personaje ?LIBRE)\n                        (own-slot-not-null personaje ?PRESO)) \n                    	(/= (personaje ?LIBRE) (personaje ?PRESO)) \n                ) \n        ) \n)\n(defrange ?LIBRE :FRAME LIBRE) \n(defrange ?PRESO :FRAME PRESO)"))
+
+([Mitologia_Class1] of  %3APAL-CONSTRAINT
+)
+
+([Mitologia_Class10000] of  Dios
+
+	(ataque 100)
+	(esMortal FALSE)
+	(estado LIBRE)
+	(nombre "hera")
+	(ubicacion OLIMPO))
+
+([Mitologia_Class10001] of  Semidios
+
+	(ataque 30)
+	(esHeroe TRUE)
+	(esMortal TRUE)
+	(estado LIBRE)
+	(nombre "aquiles")
+	(ubicacion CUEVA_MEDUSA))
+
+([Mitologia_Class10002] of  Semidios
+
+	(ataque 40)
+	(esHeroe TRUE)
+	(esMortal TRUE)
+	(estado LIBRE)
+	(nombre "heracles")
+	(ubicacion DELFOS))
+
+([Mitologia_Class10003] of  Humano
+
+	(ataque 0)
+	(esMortal TRUE)
+	(estado LIBRE)
+	(nombre "minos")
+	(ubicacion ISLA_CRETA))
+
+([Mitologia_Class10004] of  Humano
+
+	(ataque 0)
+	(esMortal TRUE)
+	(estado LIBRE)
+	(nombre "pasifae")
+	(ubicacion ISLA_CRETA))
+
+([Mitologia_Class10005] of  Humano
+
+	(ataque 0)
+	(esMortal TRUE)
+	(estado LIBRE)
+	(nombre "dedalo")
+	(ubicacion ISLA_CRETA))
+
+([Mitologia_Class10006] of  Humano
+
+	(ataque 0)
+	(esHeroe FALSE)
+	(esMortal TRUE)
+	(estado LIBRE)
+	(nombre "Icaro")
+	(ubicacion ISLA_CRETA))
+
+([Mitologia_Class10008] of  Humano
+
+	(ataque 20)
+	(esHeroe TRUE)
+	(esMortal TRUE)
+	(estado LIBRE)
+	(nombre "teseo")
+	(ubicacion ATENAS))
+
+([Mitologia_Class10009] of  Humano
+
+	(ataque 0)
+	(esMortal TRUE)
+	(estado LIBRE)
+	(nombre "ariadna")
+	(ubicacion ISLA_CRETA))
+
+([Mitologia_Class10010] of  Humano
+
+	(ataque 0)
+	(esMortal TRUE)
+	(estado LIBRE)
+	(nombre "reyAnfion")
+	(ubicacion DELFOS))
+
+([Mitologia_Class10011] of  Humano
+
+	(ataque 0)
+	(esMortal TRUE)
+	(estado LIBRE)
+	(nombre "megara")
+	(ubicacion DELFOS))
+
+([Mitologia_Class10012] of  Criatura
+
+	(ataque 65)
+	(esMortal TRUE)
+	(estado LIBRE)
+	(nombre "hidra")
+	(ubicacion CUEVA_HIDRA))
+
+([Mitologia_Class10013] of  Criatura
+
+	(ataque 50)
+	(esMortal TRUE)
+	(estado LIBRE)
+	(nombre "kraken")
+	(ubicacion CUEVA_KRAKEN))
+
+([Mitologia_Class10020] of  Animal
+
+	(ataque 5)
+	(esMortal TRUE)
+	(estado LIBRE)
+	(nombre "pegaso")
+	(ubicacion DESCONOCIDA))
+
+([Mitologia_Class10021] of  Animal
+
+	(ataque 6)
+	(esMortal TRUE)
+	(estado PRESO)
+	(nombre "toro")
+	(personaje [Mitologia_Class24])
+	(ubicacion OLIMPO))
+
+([Mitologia_Class10022] of  Objeto
+
+	(ataque 0)
+	(nombre "hiloMagico")
+	(personaje [Mitologia_Class10009])
+	(ubicacion ISLA_CRETA))
+
+([Mitologia_Class10023] of  Objeto
+
+	(ataque 0)
+	(nombre "cabezaCeto")
+	(personaje [Mitologia_Class23])
+	(ubicacion CUEVA_CETO))
+
+([Mitologia_Class10024] of  Objeto
+
+	(ataque 70)
+	(nombre "espadaAriadna")
+	(personaje [Mitologia_Class10009])
+	(ubicacion ISLA_CRETA))
+
+([Mitologia_Class10025] of  Objeto
+
+	(ataque 0)
+	(nombre "vacaMadera")
+	(personaje [Mitologia_Class10004])
+	(ubicacion ISLA_CRETA))
+
+([Mitologia_Class10026] of  Objeto
+
+	(ataque 0)
+	(nombre "barcoTeseo")
+	(ubicacion MAR_EGEO))
+
+([Mitologia_Class10027] of  Objeto
+
+	(ataque 35)
+	(nombre "espadaMadera")
+	(personaje [Mitologia_Class10001])
+	(ubicacion CUEVA_MEDUSA))
+
+([Mitologia_Class10046] of  Robo
+
+	(obtenible [Mitologia_Class30025])
+	(personaje [KB_708716_Class35])
+	(personaje2 [Mitologia_Class10005]))
+
+([Mitologia_Class10055] of  Localizacion
+
+	(personaje [Mitologia_Class28])
+	(personaje2 [Mitologia_Class29]))
+
+([Mitologia_Class10056] of  Localizacion
+
+	(personaje [Mitologia_Class25])
+	(personaje2 [Mitologia_Class29]))
+
+([Mitologia_Class10057] of  Localizacion
+
+	(personaje [Mitologia_Class29])
+	(personaje2 [Mitologia_Class37]))
+
+([Mitologia_Class10058] of  Favor
+
+	(dios [Mitologia_Class28])
+	(personaje [KB_708716_Class35]))
+
+([Mitologia_Class10059] of  Favor
+
+	(dios [Mitologia_Class27])
+	(personaje [KB_708716_Class35]))
+
+([Mitologia_Class10060] of  Favor
+
+	(dios [Mitologia_Class25])
+	(personaje [KB_708716_Class35]))
+
+([Mitologia_Class10061] of  Favor
+
+	(dios [Mitologia_Class30])
+	(personaje [KB_708716_Class35]))
+
+([Mitologia_Class10062] of  Enojo
+
+	(dios [Mitologia_Class24])
+	(personaje [Mitologia_Class32]))
+
+([Mitologia_Class10063] of  Asesinato
+
+	(personaje [KB_708716_Class35])
+	(personaje2 [Mitologia_Class23]))
+
+([Mitologia_Class10065] of  Apresamiento
+
+	(personaje [Mitologia_Class23])
+	(personaje2 [Mitologia_Class31]))
+
+([Mitologia_Class10066] of  Intercambio
+
+	(personaje [KB_708716_Class35])
+	(personaje2 [Mitologia_Class29]))
+
+([Mitologia_Class10067] of  Objeto
+
+	(ataque 0)
+	(nombre "zurronMagico")
+	(ubicacion ISLA_NINFAS))
+
+([Mitologia_Class10068] of  Objeto
+
+	(ataque 0)
+	(nombre "sandaliasAladas")
+	(personaje [Mitologia_Class37])
+	(ubicacion ISLA_NINFAS))
+
+([Mitologia_Class10070] of  Objeto
+
+	(ataque 0)
+	(nombre "cascoHades")
+	(personaje [Mitologia_Class27])
+	(ubicacion OLIMPO))
+
+([Mitologia_Class10071] of  Objeto
+
+	(ataque 30)
+	(nombre "cabezaMedusa")
+	(personaje [Mitologia_Class36])
+	(ubicacion CUEVA_MEDUSA))
+
+([Mitologia_Class10072] of  Objeto
+
+	(ataque 0)
+	(nombre "ojoDienteGrayas")
+	(personaje [Mitologia_Class29])
+	(ubicacion CUEVA_GRAYAS))
+
+([Mitologia_Class10073] of  Objeto
+
+	(ataque 20)
+	(nombre "hozAcero")
+	(personaje [Mitologia_Class25])
+	(ubicacion OLIMPO))
+
+([Mitologia_Class10074] of  Objeto
+
+	(ataque 65)
+	(nombre "espadaIndestructible")
+	(personaje [Mitologia_Class30])
+	(ubicacion OLIMPO))
+
+([Mitologia_Class10075] of  Objeto
+
+	(ataque 0)
+	(nombre "escudoBronce")
+	(personaje [Mitologia_Class28])
+	(ubicacion OLIMPO))
+
+([Mitologia_Class10076] of  Objeto
+
+	(ataque 0)
+	(nombre "bridasOro")
+	(personaje [Mitologia_Class30])
+	(ubicacion OLIMPO))
+
+([Mitologia_Class10077] of  Objeto
+
+	(ataque 0)
+	(nombre "anilloInvisibilidad")
+	(ubicacion DESCONOCIDA))
+
+([Mitologia_Class10078] of  Objeto
+
+	(ataque 0)
+	(nombre "espejoMano")
+	(ubicacion DESCONOCIDA))
+
+([Mitologia_Class10079] of  Objeto
+
+	(ataque 0)
+	(nombre "conjuroVuelo")
+	(ubicacion DESCONOCIDA))
+
+([Mitologia_Class10080] of  PosesionObtenibleCapacidad
+
+	(capacidad INVISIBILIDAD)
+	(obtenible [Mitologia_Class10070]))
+
+([Mitologia_Class10081] of  PosesionObtenibleCapacidad
+
+	(capacidad INVISIBILIDAD)
+	(obtenible [Mitologia_Class10077]))
+
+([Mitologia_Class10083] of  PosesionObtenibleCapacidad
+
+	(capacidad MATAR)
+	(obtenible [Mitologia_Class10073]))
+
+([Mitologia_Class10084] of  PosesionObtenibleCapacidad
+
+	(capacidad MATAR)
+	(obtenible [Mitologia_Class10071]))
+
+([Mitologia_Class10085] of  PosesionObtenibleCapacidad
+
+	(capacidad MATAR)
+	(obtenible [Mitologia_Class10074]))
+
+([Mitologia_Class10086] of  PosesionObtenibleCapacidad
+
+	(capacidad VUELO)
+	(obtenible [Mitologia_Class10068]))
+
+([Mitologia_Class10087] of  PosesionObtenibleCapacidad
+
+	(capacidad VUELO)
+	(obtenible [Mitologia_Class10079]))
+
+([Mitologia_Class10088] of  PosesionObtenibleCapacidad
+
+	(capacidad ALMACENAMIENTO)
+	(obtenible [Mitologia_Class10067]))
+
+([Mitologia_Class10089] of  PosesionObtenibleCapacidad
+
+	(capacidad ESPEJO)
+	(obtenible [Mitologia_Class10078]))
+
+([Mitologia_Class2] of  %3APAL-CONSTRAINT
+
+	(%3APAL-DESCRIPTION "Un personaje no puede robarse a si mismo")
+	(%3APAL-NAME "NoRobarteATiMismo")
+	(%3APAL-STATEMENT "(forall ?robo \n        (=> \n            (and (instance-of ?robo Robo) \n                 (own-slot-not-null personaje ?robo) \n                 (own-slot-not-null personaje2 ?robo))\n            (/= (personaje ?robo) (personaje2 ?robo))\n        )\n)\n(defrange ?personaje :FRAME personaje) \n(defrange ?personaje2 :FRAME personaje2)"))
+
+([Mitologia_Class23] of  Criatura
+
+	(ataque 40)
+	(esMortal TRUE)
+	(estado PRESO)
+	(nombre "ceto")
+	(ubicacion DESCONOCIDA))
+
+([Mitologia_Class24] of  Dios
+
+	(ataque 100)
+	(estado LIBRE)
+	(nombre "poseidon")
+	(ubicacion OLIMPO))
+
+([Mitologia_Class25] of  Dios
+
+	(ataque 100)
+	(estado LIBRE)
+	(nombre "hermes")
+	(ubicacion OLIMPO))
+
+([Mitologia_Class26] of  Humano
+
+	(ataque 0)
+	(esMortal TRUE)
+	(estado LIBRE)
+	(nombre "danae")
+	(ubicacion ARGOS))
+
+([Mitologia_Class27] of  Dios
+
+	(ataque 100)
+	(estado LIBRE)
+	(nombre "hades")
+	(ubicacion OLIMPO))
+
+([Mitologia_Class28] of  Dios
+
+	(ataque 100)
+	(estado LIBRE)
+	(nombre "atenea")
+	(ubicacion OLIMPO))
+
+([Mitologia_Class29] of  Dios
+
+	(ataque 100)
+	(estado LIBRE)
+	(nombre "grayas")
+	(ubicacion OLIMPO))
+
+([Mitologia_Class3] of  %3APAL-CONSTRAINT
+
+	(%3APAL-DESCRIPTION "Un personaje preso no puede asesinar a nadie")
+	(%3APAL-NAME "PresoNoPuedeAsesinarANadie")
+	(%3APAL-RANGE "(defrange ?asesinato :FRAME Asesinato) ")
+	(%3APAL-STATEMENT "(forall ?asesinato\n        (=> \n            (and \n                 (instance-of ?asesinato Asesinato)\n                 (own-slot-value asesino ?asesinato ?personaje)\n                 (own-slot-value estado ?personaje PRESO)\n            )\n            (false)\n        )\n)"))
+
+([Mitologia_Class30] of  Dios
+
+	(ataque 100)
+	(estado LIBRE)
+	(nombre "hefesto")
+	(ubicacion OLIMPO))
+
+([Mitologia_Class30000] of  PosesionObtenibleCapacidad
+
+	(capacidad ESCAPE)
+	(obtenible [Mitologia_Class10022]))
+
+([Mitologia_Class30001] of  PosesionObtenibleCapacidad
+
+	(capacidad MATAR)
+	(obtenible [Mitologia_Class10024]))
+
+([Mitologia_Class30002] of  PosesionObtenibleCapacidad
+
+	(capacidad MATAR)
+	(obtenible [Mitologia_Class10027]))
+
+([Mitologia_Class30003] of  PosesionObtenibleCapacidad
+
+	(capacidad VUELO)
+	(obtenible [Mitologia_Class10020]))
+
+([Mitologia_Class30016] of  Dios
+
+	(ataque 100)
+	(esMortal FALSE)
+	(estado LIBRE)
+	(ubicacion OLIMPO))
+
+([Mitologia_Class30017] of  Liberacion
+
+	(personaje [KB_708716_Class35])
+	(personaje2 [Mitologia_Class31]))
+
+([Mitologia_Class30018] of  Localizacion
+
+	(personaje [Mitologia_Class10010])
+	(personaje2 [Mitologia_Class10012]))
+
+([Mitologia_Class30019] of  Combate
+
+	(ataque 70)
+	(ataque2 50)
+	(personaje [Mitologia_Class10008])
+	(personaje2 [Mitologia_Class30020]))
+
+([Mitologia_Class30020] of  Criatura
+
+	(ataque 50)
+	(esMortal TRUE)
+	(estado PRESO)
+	(nombre "minotauro")
+	(ubicacion LABERINTO_CRETA))
+
+([Mitologia_Class30021] of  Objeto
+
+	(ataque 0)
+	(nombre "cabezaMinotauro")
+	(personaje [Mitologia_Class30020])
+	(ubicacion LABERINTO_CRETA))
+
+([Mitologia_Class30022] of  Objeto
+
+	(ataque 40)
+	(nombre "cuernoMinotauro")
+	(personaje [Mitologia_Class30020])
+	(ubicacion LABERINTO_CRETA))
+
+([Mitologia_Class30023] of  Objeto
+
+	(ataque 0)
+	(nombre "plumas")
+	(ubicacion LABERINTO_CRETA))
+
+([Mitologia_Class30024] of  Objeto
+
+	(ataque 0)
+	(nombre "ceraAbejas")
+	(ubicacion LABERINTO_CRETA))
+
+([Mitologia_Class30025] of  Objeto
+
+	(ataque 0)
+	(nombre "alasDedalo")
+	(personaje [Mitologia_Class10005])
+	(ubicacion LABERINTO_CRETA))
+
+([Mitologia_Class30026] of  Objeto
+
+	(ataque 0)
+	(nombre "alasIcaro")
+	(personaje [Mitologia_Class10006])
+	(ubicacion LABERINTO_CRETA))
+
+([Mitologia_Class30027] of  PosesionPersonajeCapacidad
+
+	(capacidad VUELO)
+	(personaje [Mitologia_Class10006]))
+
+([Mitologia_Class30028] of  Amistad
+
+	(animal [Mitologia_Class10021])
+	(personaje [Mitologia_Class10003]))
+
+([Mitologia_Class30029] of  Enamoramiento
+
+	(enamorado [Mitologia_Class10009])
+	(personaje [Mitologia_Class10008]))
+
+([Mitologia_Class30030] of  Enemistad
+
+	(enemigo [Mitologia_Class10005])
+	(personaje [Mitologia_Class10003]))
+
+([Mitologia_Class30031] of  Objetivo
+
+	(personaje [KB_708716_Class35])
+	(personaje2 [Mitologia_Class31])
+	(tipoObjetivo 1))
+
+([Mitologia_Class30032] of  %3APAL-CONSTRAINT
+
+	(%3APAL-DESCRIPTION "Un personaje no puede tener a la vez el favor y el enojo de un mismo dios")
+	(%3APAL-NAME "FavorYEnojoDios")
+	(%3APAL-STATEMENT "(forall ?favor \n        (forall ?enojo \n                (=> (and (instance-of ?favor Favor)\n	       (instance-of ?enojo Enojo)  \n                               (own-slot-not-null personaje ?favor) \n                               (own-slot-not-null personaje ?enojo) \n                               (= (dios ?favor) (dios ?enojo))) \n                               (/= (personaje ?favor) (personaje ?enojo))\n                 )\n         )\n)\n(defrange ?personaje :FRAME personaje) \n(defrange ?personaje :FRAME personaje)"))
+
+([Mitologia_Class30033] of  %3APAL-CONSTRAINT
+)
+
+([Mitologia_Class31] of  Humano
+
+	(ataque 0)
+	(esMortal TRUE)
+	(estado LIBRE)
+	(nombre "andromeda")
+	(ubicacion ARGOS))
+
+([Mitologia_Class32] of  Humano
+
+	(ataque 0)
+	(esMortal TRUE)
+	(estado LIBRE)
+	(nombre "casiopea")
+	(ubicacion ARGOS))
+
+([Mitologia_Class34] of  Criatura
+
+	(ataque 0)
+	(esMortal TRUE)
+	(estado LIBRE)
+	(nombre "doris")
+	(ubicacion DESCONOCIDA))
+
+([Mitologia_Class35] of  Criatura
+
+	(ataque 0)
+	(esMortal TRUE)
+	(estado LIBRE)
+	(nombre "nereidas")
+	(ubicacion DESCONOCIDA))
+
+([Mitologia_Class36] of  Criatura
+
+	(ataque 20)
+	(esMortal TRUE)
+	(estado LIBRE)
+	(nombre "medusa")
+	(ubicacion CUEVA_MEDUSA))
+
+([Mitologia_Class37] of  Criatura
+
+	(ataque 0)
+	(esMortal TRUE)
+	(estado LIBRE)
+	(nombre "ninfas")
+	(ubicacion ISLA_NINFAS))
+
+([Mitologia_Class4] of  %3APAL-CONSTRAINT
+
+	(%3APAL-DESCRIPTION "Para apresar a alguien debe estar libre")
+	(%3APAL-NAME "ApresarAAlguienSoloSiEstaLibre")
+	(%3APAL-RANGE "(defrange ?apresamiento :FRAME Apresamiento)")
+	(%3APAL-STATEMENT "(forall ?apresamiento\n        (=> \n            (and \n                 (instance-of ?apresamiento Apresamiento)\n                 (own-slot-value preso ?apresamiento ?personaje)\n                 (not (own-slot-value estado ?personaje LIBRE))\n            )\n            (false)\n        )\n)"))

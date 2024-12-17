@@ -1,0 +1,1091 @@
+package com.sample.rules
+
+import java.util.Set;
+import clases.*;
+import acciones.*;
+
+//GENERALES
+
+rule "Objetivo liberar personaje-personaje"
+salience 4
+	when
+		$p1 : Personaje()
+		$p2 : Personaje(estado==Estado.LIBRE)
+		$l1 : Liberacion(personaje1==$p1, personaje2==$p2)
+		$o : Objetivo(tipoObjetivo==1, personaje1==$p1, personaje2==$p2)
+	then
+		drools.halt();
+end
+
+rule "Objetivo obtener personaje-obtenible"
+salience 4
+	when
+		$p : Personaje()
+		$ob : Obtenible(personaje==$p)
+		$o : Objetivo(tipoObjetivo==2, personaje1==$p, obtenible==$ob)
+	then		
+		drools.halt();
+end
+	
+rule "Objetivo obtener personaje-capacidad"
+salience 4
+	when
+		$p : Personaje()
+		$c : Capacidad()
+		$pos : PosesionPersonajeCapacidad(personaje==$p, capacidad==$c)
+		$o : Objetivo(tipoObjetivo==3, personaje1==$p, capacidad==$c)
+	then
+		drools.halt();
+end
+
+rule "Objetivo matar personaje-personaje"
+salience 4
+	when
+		$p1 : Personaje()
+		$p2 : Personaje(estado==Estado.MUERTO)
+		$l1 : Asesinato(personaje1==$p1, personaje2==$p2)
+		$o : Objetivo(tipoObjetivo==4, personaje1==$p1, personaje2==$p2)
+	then
+		drools.halt();
+end
+
+rule "Designar heroe en base al objetivo"
+salience 3
+	when
+		$p : Personaje(esHeroe==false)
+		$o : Objetivo(personaje1==$p)
+	then
+		modify($p){
+			setEsHeroe(true);
+		}
+end
+
+rule "Obtener capacidad de obtenible"
+salience 3
+    when
+       $p : Personaje()
+       $c : Capacidad()
+       $o : Obtenible(personaje==$p)
+       $pos1 : PosesionObtenibleCapacidad(obtenible==$o, capacidad==$c)
+       not PosesionPersonajeCapacidad(personaje==$p, capacidad==$c)
+    then
+       PosesionPersonajeCapacidad pos2 = new PosesionPersonajeCapacidad($p, $c);
+       insert(pos2);
+       System.out.println($p.getNombre()+" obtiene la capacidad de "+$c+" por tener "+$o.getNombre());
+end
+
+rule "Objeto misma ubicacion que el personaje"
+salience 3
+	when
+		$ub : Ubicacion()
+		$p  : Personaje(ubicacion==$ub)
+		$obj: Obtenible(personaje==$p, ubicacion!=$ub)
+	then
+		modify($obj){
+			setUbicacion($ub)
+		}
+		//System.out.println($obj.getNombre()+" se desplaza con "+$p.getNombre() +" a "+$ub);
+end
+
+rule "Apresar animal"
+salience 3
+    when
+        $p  : Personaje ()
+        $an : Animal(estado==Estado.LIBRE)
+        $ap : Apresamiento(personaje1==$p, personaje2==$an)
+    then
+        modify($an){
+        	setEstado(Estado.PRESO),
+        	setPersonaje($p)
+        }
+        System.out.println("Por el apresamiento de "+$p.getNombre()+" a "+$an.getNombre()+", "+$an.getNombre()+" pasa a estar preso");
+end
+
+rule "Apresar personaje"
+salience 3
+    when
+        $p1 : Personaje ()
+        $p2 : Personaje (estado==Estado.LIBRE)
+        $ap : Apresamiento(personaje1==$p1, personaje2==$p2)
+    then
+        modify($p2){
+        	setEstado(Estado.PRESO)
+        }
+        System.out.println("Por el apresamiento de "+$p1.getNombre()+" a "+$p2.getNombre()+", "+$p2.getNombre()+" pasa a estar preso");
+end
+
+rule "Preso en la misma ubicacion que el personaje1"
+salience 3	
+	when
+		$ub: Ubicacion()
+		$p1 : Personaje(ubicacion==$ub)
+		$p2 : Personaje(estado == Estado.PRESO, ubicacion!=$ub)
+		Apresamiento(personaje1==$p1, personaje2==$p2)
+	then
+		modify($p2){
+			setUbicacion($ub);
+		}
+end
+
+rule "Obtener obtenibles de un preso"
+salience 3
+    when
+    	$p1 : Personaje()
+        $p2 : Personaje(estado == Estado.PRESO)
+    	$ap : Apresamiento(personaje1==$p1, personaje2==$p2)
+        $o : Obtenible(personaje == $p2)
+    then
+    	modify($o){
+    		setPersonaje($p1)
+    	}
+    	System.out.println($p1.getNombre()+" obtiene el objeto "+$o.getNombre()+ " de "+$p2.getNombre()+" que tiene "+$o.getAtaque()+" de ataque");
+end
+
+rule "Obtener obtenibles de un muerto"
+salience 3
+    when
+    	$p1 : Personaje ()
+        $p2 : Personaje(estado == Estado.MUERTO)
+    	$as : Asesinato(personaje1==$p1, personaje2==$p2)
+        $o : Obtenible(personaje == $p2)
+    then
+    	modify($o){
+    		setPersonaje($p1)
+    	}
+    	System.out.println($p1.getNombre()+" obtiene el objeto "+$o.getNombre()+ " de "+$p2.getNombre()+" que tiene "+$o.getAtaque()+" de ataque");
+end
+
+rule "Liberar personaje"
+salience 3
+    when
+        $p1 : Personaje ()
+        $p2 : Personaje (estado==Estado.PRESO)
+        $p3 : Personaje ()
+        $ap : Apresamiento(personaje1==$p3, personaje2==$p2)
+        $li : Liberacion(personaje1==$p1, personaje2==$p2)
+    then
+        modify($p2){
+        	setEstado(Estado.LIBRE)
+        }
+        delete($ap)
+        System.out.println($p1.getNombre()+" libera a "+$p2.getNombre()+" y pasa a estar libre");
+end
+
+rule "Liberar personaje matando al que apresa"
+salience 3
+	when
+		$p1 : Personaje (estado == Estado.PRESO)
+		$p2 : Personaje (estado == Estado.MUERTO)
+		$p3 : Personaje()
+        $as : Asesinato(personaje1==$p3, personaje2==$p2)
+        $ap : Apresamiento(personaje1==$p2, personaje2==$p1)
+	then
+		Liberacion l = new Liberacion($p3, $p1);
+		insert(l);
+		System.out.println("Como "+$p3.getNombre()+" mata a "+$p2.getNombre()+", "+$p1.getNombre()+" va a ser libre");
+end
+
+rule "Actualizar ataque de objeto a personaje"
+salience 3
+	when
+		$p: Personaje()
+		$o: Obtenible(personaje==$p, ataque>$p.ataque())
+		$pos : PosesionObtenibleCapacidad(obtenible==$o, capacidad==Capacidad.MATAR)
+	then
+		modify($p){
+			setAtaque($o.getAtaque())
+		}
+		System.out.println($o.getNombre()+" es, hasta la fecha, el arma mas potente de "+$p.getNombre()+" y se actualiza como su arma principal");
+end
+
+rule "Combate"
+salience 3
+	when
+		$ub : Ubicacion()
+		$p1 : Personaje(ubicacion==$ub)
+		$p2 : Personaje(ubicacion==$ub)
+		$co : Combate(combatientes contains $p1, combatientes contains $p2, vencedor==$p1, vencedor!=$p2)
+	then
+		Asesinato as = new Asesinato($p1,$p2);
+		insert(as);
+		delete($co);
+		System.out.println($p1.getNombre()+" es el vencedor y hay un asesinato");
+end
+
+rule "Matar personaje"
+salience 3
+    when
+        $p1 : Personaje()
+        $p2 : Personaje(estado!=Estado.MUERTO, esMortal)
+        $a : Asesinato(personaje1==$p1, personaje2==$p2)
+    then
+        modify($p2){
+        	setEstado(Estado.MUERTO)
+        };
+    	System.out.println($p1.getNombre()+" mata a "+$p2.getNombre()+" y pasa a estar muerto");
+end
+
+rule "Si 2 heroes tienen como objetivo liberar a la misma persona, se pelean"
+salience 3
+	when
+		$ub : Ubicacion()
+		$h1 : Personaje(esHeroe==true, estado==Estado.LIBRE, ubicacion==$ub)
+		$h2 : Personaje(esHeroe==true, estado==Estado.LIBRE, ubicacion==$ub)
+		$p : Personaje()
+		$o1 : Objetivo(tipoObjetivo==1, personaje1==$h1, personaje2==$p, personaje1!=$h2)
+		$o2 : Objetivo(tipoObjetivo==1, personaje1==$h2, personaje2==$p)
+		not Combate(combatientes contains $h1, combatientes contains $h2)
+	then
+		Combate com = new Combate($h1, $h2);
+        insert(com);
+        System.out.println($h1.getNombre()+ " combate con "+$h2.getNombre());
+end
+
+rule "Si el heroe no tiene capacidad"
+salience 3
+	when
+		$ub : Ubicacion()
+		$c : Capacidad()
+        $p1 : Personaje(estado==Estado.LIBRE, esHeroe==true, ubicacion==$ub)
+        $p2 : Personaje(estado==Estado.LIBRE, esHeroe==false, ubicacion==$ub, nombre!="Ninfas")
+        $pos1 : PosesionPersonajeCapacidad(personaje==$p1, capacidad==Capacidad.INVISIBILIDAD)
+        $o : Obtenible(personaje==$p2)
+        $pos2 : PosesionObtenibleCapacidad(obtenible==$o, capacidad==$c)
+        not PosesionPersonajeCapacidad(personaje==$p1, capacidad==$c)
+	then
+		Robo r = new Robo($p1,$p2,$o);
+    	insert(r);
+    	System.out.println("Como "+$p1.getNombre()+" tiene INVISIBILIDAD, roba "+$o.getNombre()+ " a "+$p2.getNombre());
+end
+
+rule "Obtener obtenibles por el favor de un dios"
+salience 3
+    when
+        $d : Dios()
+        $p : Personaje()
+        $f : Favor(personaje1==$d, personaje2==$p)
+        $o : Obtenible(personaje==$d)
+    then
+        modify($o){
+    		setPersonaje($p)
+    	}
+    	System.out.println($p.getNombre()+" obtiene el objeto "+$o.getNombre()+ " de "+$d.getNombre()+" que tiene "+$o.getAtaque()+" de ataque");
+end
+
+rule "Localizar por el favor de un dios"
+salience 3
+    when
+        $d : Dios()
+        $p1 : Personaje()
+        $p2 : Personaje()
+        $f : Favor(personaje1==$d, personaje2==$p1)
+        $l1 : Localizacion(personaje1==$d, personaje2==$p2)
+        not Localizacion(personaje1==$p1, personaje2==$p2)
+    then
+    	Localizacion l2 = new Localizacion($p1, $p2);
+    	insert(l2);
+        System.out.println($p1.getNombre()+" localiza a "+$p2.getNombre()+ " gracias a que tiene el favor de "+$d.getNombre());
+end
+
+rule "Robar obtenible"
+salience 3
+    when
+    	$ub : Ubicacion()
+        $p1 : Personaje(estado==Estado.LIBRE, ubicacion==$ub)
+        $pos : PosesionPersonajeCapacidad(personaje==$p1, capacidad==Capacidad.INVISIBILIDAD)
+        $p2 : Personaje(ubicacion==$ub)
+        $o : Obtenible(personaje==$p2)
+        $r : Robo(personaje1==$p1,personaje2==$p2,obtenible1==$o)
+    then
+        modify($o){
+    		setPersonaje($p1)
+    	}
+    	delete($r)
+    	System.out.println($p1.getNombre()+" obtiene el objeto "+$o.getNombre()+ " por robo que tiene "+$o.getAtaque()+" de ataque");
+end
+
+rule "Intercambiar obtenible por otro obtenible"
+salience 3
+    when
+    	$ub : Ubicacion()
+        $p1 : Personaje(ubicacion==$ub)
+        $p2 : Personaje(ubicacion==$ub)
+        $o1 : Obtenible(personaje==$p1)
+        $o2 : Obtenible(personaje==$p2)
+        $i : Intercambio(personaje1==$p1,personaje2==$p2,obtenible1==$o1,obtenible2==$o2)
+    then
+        modify($o1){
+    		setPersonaje($p2)
+    	}
+    	modify($o2){
+    		setPersonaje($p1)
+    	}
+    	delete($i);
+        System.out.println($p1.getNombre()+" obtiene "+$o2.getNombre()+ "debido a intercambio de "+$o1.getNombre()+ " con "+$p2.getNombre());
+end
+
+rule "Localizar a alguien por intercambio con obtenible"
+salience 3
+    when
+        $ub : Ubicacion()
+        $p1 : Personaje()
+        $p2 : Personaje()
+        $p3 : Personaje(ubicacion==$ub)
+        $o : Obtenible(personaje==$p1)
+        $l1 : Localizacion(personaje1==$p2,personaje2==$p3)
+        $i : Intercambio(personaje1==$p1,personaje2==$p2,obtenible1==$o,loc==$l1)
+        not Localizacion(personaje1==$p1, personaje2==$p3)
+    then
+        Localizacion l2 = new Localizacion($p1, $p3);
+    	insert(l2);
+    	modify($o){
+    		setPersonaje($p2)
+    	}
+    	modify($p1){
+    		setUbicacion($ub)
+    	}
+    	delete($i);
+        System.out.println($p1.getNombre()+" localiza a "+$p3.getNombre()+ " debido a intercambio de "+$o.getNombre()+ " con "+$p2.getNombre()+" y se va hacia "+$ub);
+end
+
+
+//ESPECIFICAS
+
+rule "Liberar Ceto si Poseidon esta enojado con Casiopea"
+salience 1
+	when
+		$p1 : Personaje(nombre == "Casiopea", estado == Estado.LIBRE)
+		$p2 : Dios(nombre == "Poseidon")
+    	$enojo: Enojo(personaje1 == $p2, personaje2 == $p1)
+    	$ceto: Personaje(nombre == "Ceto", estado == Estado.PRESO)
+	then
+ 		modify($ceto){
+            setEstado(Estado.LIBRE),
+            setUbicacion(Ubicacion.ARGOS)                 
+        }
+    	System.out.println("Ceto ha sido liberado porque Poseidon esta enojado con " + $p1.getNombre());
+end
+
+rule "Ceto apresa mito Heracles"
+salience 1
+	when
+		$ub: Ubicacion()
+		$p : Personaje(estado==Estado.LIBRE, esHeroe==true)
+		$c : Criatura(nombre == "Ceto", estado == Estado.LIBRE, ubicacion==$ub)
+		$a : Personaje(estado == Estado.LIBRE, ubicacion==$ub, nombre=="Andromeda")
+		$obj: Objetivo(personaje1==$p, tipoObjetivo==4)
+		not Apresamiento(personaje1==$c, personaje2==$a)
+	then
+		Apresamiento ap = new Apresamiento($c, $a);
+		insert(ap);
+		modify($c){
+			setUbicacion(Ubicacion.CUEVA_CETO)
+		}
+		System.out.println("Como Ceto es libre, apresa a "+$a.getNombre());
+end
+
+rule "Ceto apresa"
+salience 1
+	when
+		$ub: Ubicacion()
+		$p : Personaje(estado==Estado.LIBRE, esHeroe==true)
+		$c : Criatura(nombre == "Ceto", estado == Estado.LIBRE, ubicacion==$ub)
+		$a : Personaje(estado == Estado.LIBRE, ubicacion==$ub)
+		$obj: Objetivo(personaje1==$p, personaje2==$a, tipoObjetivo==1)
+		not Apresamiento(personaje1==$c, personaje2==$a)
+	then
+		Apresamiento ap = new Apresamiento($c, $a);
+		insert(ap);
+		modify($c){
+			setUbicacion(Ubicacion.CUEVA_CETO)
+		}
+		System.out.println("Como Ceto es libre, apresa a "+$a.getNombre());
+end
+
+rule "Sub-Objetivo matar Medusa"
+salience 1
+	when
+		$m : Personaje(nombre=="Medusa", estado!=Estado.MUERTO)
+		$a : Personaje(estado == Estado.PRESO)
+		$c : Criatura(nombre=="Ceto" || nombre=="Medusa")
+		$ap: Apresamiento(personaje1==$c, personaje2==$a)
+		$p : Personaje(esHeroe==true, estado==Estado.LIBRE)
+		$obj: Objetivo(personaje1==$p, personaje2==$a, tipoObjetivo==1)
+		not Objetivo(personaje1==$p, personaje2==$m, tipoObjetivo==4)
+	then
+		Objetivo obj = new Objetivo($p,$m,4);
+		insert (obj);
+		System.out.println("Como "+$p.getNombre()+" tiene como objetivo liberar a "+$a.getNombre()+", se crea el sub-objetivo de matar a Medusa");
+end
+
+
+rule "Escudo-espejo"
+salience 3
+    when
+        $d : Dios(nombre=="Hefesto")
+        $p : Personaje(estado==Estado.LIBRE)
+        $o : Objeto(personaje==$p, nombre=="Escudo de Bronce")
+        $f : Favor(personaje1==$d, personaje2==$p)
+    then
+    	PosesionObtenibleCapacidad pos1 = new PosesionObtenibleCapacidad($o,Capacidad.ESPEJO);
+        modify($o){
+    		setNombre("Escudo-Espejo")
+    	}
+    	insert(pos1);        
+        System.out.println($p.getNombre()+" obtiene Escudo-Espejo debido a tener el favor de Hefesto y el Escudo de Bronce");	
+end
+
+rule "Ninfas-obtenibles"
+salience 1
+    when
+    	$ub: Ubicacion()
+        $p : Personaje(nombre != "Grayas", ubicacion==$ub)                          
+        $n : Personaje(nombre=="Ninfas", ubicacion==$ub)
+        $l : Localizacion(personaje1==$p, personaje2==$n)
+        $o : Obtenible(personaje==$n)            
+    then
+        modify($o){
+            setPersonaje($p)                         
+        }
+        System.out.println($p.getNombre()+" obtiene "+$o.getNombre()+ " de las Ninfas por haberlas localizado");
+end
+
+rule "Ir a las Grayas"
+salience 1
+	when
+		$c : Capacidad()
+		$p2 : Personaje(nombre=="Ninfas")
+		$p : Personaje(esHeroe==true, estado==Estado.LIBRE, ubicacion!=Ubicacion.CUEVA_GRAYAS)
+		not PosesionPersonajeCapacidad(personaje==$p, capacidad==$c)
+		$o : Objetivo(personaje1==$p)
+		$p3 : Personaje(nombre=="Grayas")
+		$l1 : Localizacion(personaje1==$p, personaje2==$p3)
+		$pos : PosesionPersonajeCapacidad(personaje==$p2, capacidad==$c)
+	then
+		modify($p){
+			setUbicacion(Ubicacion.CUEVA_GRAYAS)
+		}
+		System.out.println($p.getNombre()+" va a la cueva de las Grayas porque sabe que le faltan capacidades y las tiene localizadas");
+end
+
+rule "Heroe roba ojo a Grayas y le pide intercambio a cambio de localizar Ninfas"
+salience 1
+    when
+    	$ub : Ubicacion()
+        $p1 : Personaje(estado==Estado.LIBRE, esHeroe==true, ubicacion==$ub)
+        $pos : PosesionPersonajeCapacidad(personaje==$p1, capacidad==Capacidad.INVISIBILIDAD)
+        $p2 : Personaje(nombre=="Grayas", ubicacion==$ub)
+        $p3 : Personaje(nombre=="Ninfas")
+        $o : Objeto(nombre=="Ojo/Diente de las Grayas")
+        $l2 : Localizacion(personaje1==$p2, personaje2==$p3)
+        not Localizacion(personaje1==$p1, personaje2==$p3)
+    then
+    	Robo r = new Robo($p1,$p2,$o);
+    	insert(r);
+    	Intercambio i = new Intercambio($p1, $p2, $o, $l2);
+    	insert(i);
+    	System.out.println($p1.getNombre()+" roba Ojo/Diente de las Grayas a cambio de la localizacion de las Ninfas");
+end
+
+rule "Heroe preparado para matar a Medusa"
+salience 1
+	when
+	 	$p : Personaje(estado==Estado.LIBRE, esHeroe==true)
+	 	$m : Personaje(nombre=="Medusa", estado!=Estado.MUERTO)
+	 	$pos1 : PosesionPersonajeCapacidad(personaje==$p, capacidad==Capacidad.ESPEJO)
+        $pos2 : PosesionPersonajeCapacidad(personaje==$p, capacidad==Capacidad.INVISIBILIDAD)
+        $pos3 : PosesionPersonajeCapacidad(personaje==$p, capacidad==Capacidad.VUELO)
+        $pos4 : PosesionPersonajeCapacidad(personaje==$p, capacidad==Capacidad.MATAR)
+        $pos5 : PosesionPersonajeCapacidad(personaje==$p, capacidad==Capacidad.ALMACENAMIENTO)
+        $obj  : Objetivo(personaje1==$p, personaje2==$m, tipoObjetivo==4)
+	then
+		modify($p){
+			setUbicacion(Ubicacion.CUEVA_MEDUSA)
+		}
+		System.out.println($p.getNombre()+ " va a la cueva de Medusa");
+end
+
+rule "Matar medusa"
+salience 1
+    when
+    	$ub: Ubicacion()
+        $p : Personaje(estado==Estado.LIBRE, ubicacion==$ub, esHeroe==true)
+        $m : Personaje(nombre=="Medusa", estado!=Estado.MUERTO, ubicacion==$ub)
+        $obj : Objetivo(personaje1==$p, personaje2==$m, tipoObjetivo==4)
+    then
+        Combate com = new Combate($p, $m);
+        insert(com);
+        delete($obj);
+        System.out.println($p.getNombre()+ " combate con Medusa");
+end
+
+rule "Ir a por Ceto"
+salience 1
+	when
+		$p : Personaje(esHeroe==true, estado == Estado.LIBRE, ubicacion!=Ubicacion.CUEVA_CETO)
+		$o : Objeto(nombre=="Cabeza de Medusa", personaje==$p)	
+        $c : Criatura(nombre == "Ceto", estado!=Estado.MUERTO)
+		$a : Personaje(estado == Estado.PRESO)
+		$ap: Apresamiento(personaje1==$c, personaje2==$a)
+	then
+		modify($p){
+			setUbicacion(Ubicacion.CUEVA_CETO)
+		}
+		System.out.println("Con la cabeza de Medusa, "+$p.getNombre()+" va a la cueva de Ceto");
+end
+
+rule "Matar Ceto"
+salience 1
+	when
+		$ub: Ubicacion()
+		$p1 : Personaje(esHeroe == true, estado == Estado.LIBRE, ubicacion==$ub)
+		$o : Objeto(nombre == "Cabeza de Medusa", personaje == $p1)
+		$c : Personaje(nombre == "Ceto", estado != Estado.MUERTO, ubicacion==$ub)
+		$p2 : Personaje(ubicacion==$ub)
+		$apr : Apresamiento(personaje1==$c, personaje2==$p2)
+	then
+		Combate com = new Combate($p1,$c);
+		insert(com);
+		System.out.println($p1.getNombre()+ " combate con Ceto");
+end
+
+// GENERALES
+
+rule "Laberinto apresa"
+salience 2
+	when
+		$p : Personaje(ubicacion==Ubicacion.LABERINTO_CRETA, estado==Estado.LIBRE)
+	then
+		modify($p){
+			setEstado(Estado.PRESO)
+		}
+		System.out.println("Como "+$p.getNombre()+" esta en el laberinto, pasa a estar preso");
+end
+
+rule "Personaje muere sin ser asesinado"
+salience 3
+	when
+		$ub : Ubicacion()
+		$p : Personaje(estado==Estado.MUERTO, ubicacion==$ub)
+		not Asesinato(personaje2==$p)
+		$o  : Obtenible(personaje==$p)
+	then
+		modify($o){
+			setPersonaje(null)
+		}
+		System.out.println("Como "+$p.getNombre()+" muere por accidente, "+$o.getNombre()+" se queda en "+$ub);
+end
+
+rule "Personaje coge objetos si nadie los tiene"
+salience 3
+	when
+		$ub  : Ubicacion()
+		$p  : Personaje(ubicacion==$ub, estado == Estado.LIBRE)
+		$obj : Obtenible(personaje==null, ubicacion!=Ubicacion.DESCONOCIDA, ubicacion==$ub, nombre!="Plumas", nombre!="Cera Abejas")
+	then
+		modify($obj){
+			setPersonaje($p)
+		}
+		System.out.println($p.getNombre()+" obtiene el objeto "+$obj.getNombre()+" que tiene "+$obj.getAtaque()+" de ataque");
+end
+
+rule "Minos tiene amistad con cualquier animal que posea"
+salience 2
+	when
+		$p : Personaje(nombre=="Minos")
+		$a : Animal(personaje==$p)
+		not Amistad(personaje1==$p, animal==$a)
+	then
+		Amistad am = new Amistad($p, $a);
+		insert(am);
+		System.out.println("Minos tiene amistad con "+$a.getNombre());
+end
+
+rule "Obtener obtenible por amor"
+salience 3
+	when
+		$ub : Ubicacion()
+		$p1 : Personaje(ubicacion==$ub)
+		$p2 : Personaje(ubicacion==$ub)
+		$o : Obtenible(personaje==$p1)
+		enam  : Enamoramiento(personaje1==$p1, personaje2==$p2)
+	then
+		modify($o){
+    		setPersonaje($p2)
+    	}
+    	System.out.println($p2.getNombre()+ " obtiene el objeto " +$o.getNombre() +" por su enamoramiento con "+ $p1.getNombre()+" que tiene "+$o.getAtaque()+" de ataque");
+end
+
+
+rule "Obtener obtenible por amistad"
+salience 3
+	when
+		$ub : Ubicacion()
+		$p1 : Personaje(ubicacion==$ub)
+		$p2 : Personaje(ubicacion==$ub)
+		$o : Obtenible(personaje==$p2)
+		$am  : Amistad(personaje1==$p1, personaje2==$p2)
+	then
+		modify($o){
+    		setPersonaje($p1)
+    	}
+    	System.out.println($p1.getNombre()+" obtiene el objeto "+$o.getNombre()+" por su amistad con "+$p2.getNombre()+" que tiene "+$o.getAtaque()+" de ataque");
+end
+
+rule "Obtener localizacion por amistad"
+salience 3
+	when
+		$ub : Ubicacion()
+		$p1 : Personaje(ubicacion==$ub)
+		$p2 : Personaje(ubicacion==$ub)
+		$p3 : Personaje()
+		$l : Localizacion(personaje1==$p1, personaje2==$p3)
+		$am  : Amistad(personaje1==$p2, personaje2==$p1)
+		not Localizacion(personaje1==$p2, personaje2==$p3)
+	then
+		Localizacion l2 = new Localizacion($p2, $p3);
+		insert(l2);
+    	System.out.println($p2.getNombre()+" obtiene la localizacion de "+$p3.getNombre()+" por su amistad con "+$p1.getNombre());
+end
+
+rule "Preso muere"
+salience 3
+	when
+		$p : Personaje(estado==Estado.MUERTO)
+		$o : Objetivo(tipoObjetivo==1, personaje2==$p)
+	then
+		delete($o);
+		System.out.println("Se elimina el objetivo de liberar a "+$p.getNombre()+" porque ha muerto");
+end
+
+rule "Minos apresa a sus enemigos"
+salience 2
+	when	
+		$p1 : Personaje(nombre == "Minos", estado == Estado.LIBRE)
+		$p2 : Personaje(estado == Estado.LIBRE)
+		$en : Enemistad(personaje1 == $p1, personaje2 == $p2)
+		$min : Criatura(nombre=="Minotauro")
+	then
+		modify($p2){
+			setUbicacion(Ubicacion.LABERINTO_CRETA),
+			setEstado(Estado.PRESO)
+		}
+		delete($en);
+		System.out.println("Minos encierra a "+$p2.getNombre()+" en el laberinto");
+end
+
+rule "Coger cera y plumas si eres Dedalo e Icaro"
+salience 2
+	when
+		$p1 : Personaje(nombre == "Dedalo", ubicacion == Ubicacion.LABERINTO_CRETA)
+		$p2 : Personaje(nombre =="Icaro", ubicacion == Ubicacion.LABERINTO_CRETA)
+		$o1 : Objeto(nombre == "Cera Abejas", ubicacion == Ubicacion.LABERINTO_CRETA)
+		$o2 : Objeto(nombre == "Plumas", ubicacion == Ubicacion.LABERINTO_CRETA)
+	then
+		modify($o1){
+			setPersonaje($p1)
+		}
+		modify($o2){
+			setPersonaje($p2)
+		}
+end
+
+rule "Obtener alas"
+salience 2
+	when
+		$p1 : Personaje(nombre == "Dedalo", estado == Estado.PRESO, ubicacion == Ubicacion.LABERINTO_CRETA)
+		$p2 : Personaje(nombre =="Icaro", estado == Estado.PRESO, ubicacion == Ubicacion.LABERINTO_CRETA)
+		$o1 : Objeto(nombre == "Cera Abejas", (personaje == $p1 || personaje == $p2))
+		$o2 : Objeto(nombre == "Plumas", (personaje == $p1 || personaje == $p2))
+	then
+		modify($o1){
+			setNombre("Alas"),
+			setPersonaje($p1)
+		}
+		PosesionObtenibleCapacidad pos1 = new PosesionObtenibleCapacidad($o1, Capacidad.VUELO);
+		insert(pos1);
+		modify($o2){
+			setNombre("Alas"),
+			setPersonaje($p2)
+		}
+		PosesionObtenibleCapacidad pos2 = new PosesionObtenibleCapacidad($o2, Capacidad.VUELO);
+		insert(pos2);
+		System.out.println("Dedalo e Icaro se fabrican unas Alas con Plumas y Cera Abejas");
+end
+
+rule "Escapar volando del laberinto (Icaro)"
+salience 2
+	when
+		$min: Criatura(nombre=="Minotauro", estado==Estado.MUERTO)
+		$p : Personaje(nombre == "Icaro", estado == Estado.PRESO, ubicacion == Ubicacion.LABERINTO_CRETA)
+		$o : Objeto(nombre == "Alas", personaje == $p)
+	then
+		modify($p){
+			setUbicacion(Ubicacion.MAR_EGEO),
+			setEstado(Estado.MUERTO)
+		}
+		modify($o){
+			setNombre("Alas rotas de Icaro")
+		}
+		System.out.println("Icaro escapa del laberinto hacia el mar Egeo");
+end
+
+rule "Escapar del laberinto volando al Mar Egeo"
+salience 2
+	when
+		$min: Criatura(nombre=="Minotauro", estado==Estado.MUERTO)
+		$p  : Personaje(nombre != "Icaro", estado == Estado.PRESO, ubicacion == Ubicacion.LABERINTO_CRETA)
+		$pos: PosesionPersonajeCapacidad(personaje==$p, capacidad==Capacidad.VUELO)
+		not PosesionPersonajeCapacidad(personaje==$p, capacidad==Capacidad.ESCAPE)
+	then
+		modify($p){
+			setEstado(Estado.LIBRE),
+			setUbicacion(Ubicacion.MAR_EGEO)
+		}
+		System.out.println($p.getNombre()+" escapa del laberinto volando hacia el mar Egeo");
+end
+
+rule "Dedalo escapa en barco a Argos"
+salience 2
+	when
+		$p : Personaje(nombre=="Dedalo", estado==Estado.LIBRE, ubicacion==Ubicacion.MAR_EGEO)
+		$o : Objeto(nombre=="Barco de Teseo", personaje==$p)
+		$p2 : Personaje(esHeroe==true, estado==Estado.LIBRE)
+	then
+		modify($p){
+			setUbicacion(Ubicacion.ARGOS)
+		}
+		Localizacion l = new Localizacion($p2, $p);
+		insert(l);
+		System.out.println("Dedalo escapa en barco a Argos y "+$p2.getNombre()+" lo sabe");
+end
+
+// ESPECIFICAS
+rule "Minos tiene enojo de Poseidon"
+salience 2
+	when
+		$p : Personaje(nombre=="Minos")
+		$d : Dios(nombre=="Poseidon")
+		$a : Animal(personaje==$p)
+		$f : Favor(personaje1==$d, personaje2==$p)
+		$am: Amistad(personaje1==$p, animal==$a)
+	then
+		Enojo en = new Enojo($d, $p);
+		insert(en);
+		delete($f);
+		System.out.println("Minos desobecede a Poseidon en su orden de sacrificio al toro y Poseidon se enoja con Minos");
+end	
+
+rule "Enamoramiento Pasifae"
+salience 2
+	when
+		$p1 : Personaje(nombre=="Minos")
+		$p2 : Personaje(nombre=="Pasifae")
+		$d  : Dios(nombre=="Poseidon")
+		$a : Animal(personaje==$p1)
+		en  : Enojo(personaje1==$d, personaje2==$p1)
+		not Enamoramiento(personaje1==$p2, animal==$a)
+	then
+		Enamoramiento ena = new Enamoramiento($p2, $a);
+		insert(ena);
+		System.out.println("Poseidon hace que Pasifae se enamore del toro");
+end
+
+rule "Nacimiento Minotauro"
+salience 2
+	when
+		$a  : Animal(nombre=="Toro")
+		$p2 : Personaje(nombre=="Pasifae")
+		$ena: Enamoramiento(personaje1==$p2, animal==$a)
+		$o  : Objeto(nombre=="Vaca de madera", personaje==$p2)
+		not Criatura(nombre=="Minotauro")
+	then
+		Criatura cr = new Criatura("Minotauro", Ubicacion.ISLA_CRETA, 50);
+		Objeto obj = new Objeto("Cuerno de Minotauro", cr, cr.getUbicacion(),40);
+		Objeto obj2 = new Objeto("Cabeza de Minotauro", cr, cr.getUbicacion(), 0);
+		insert(cr);
+		insert(obj);
+		insert(obj2);
+		System.out.println("Se produce el nacimiento del minotauro");
+end
+
+rule "Creacion del laberinto"
+salience 2
+	when
+		$min : Criatura(nombre == "Minotauro", estado == Estado.LIBRE)
+		not Objeto(nombre=="Plumas")
+	then
+		insert(Ubicacion.LABERINTO_CRETA);
+		Objeto obj1 = new Objeto("Plumas", null, Ubicacion.LABERINTO_CRETA, 0);
+		Objeto obj2 = new Objeto("Cera Abejas", null, Ubicacion.LABERINTO_CRETA, 0);
+		insert(obj1);
+		insert(obj2);
+		modify($min){
+			setEstado(Estado.PRESO),
+			setUbicacion(Ubicacion.LABERINTO_CRETA)
+		};
+		System.out.println("Dedalo construye un laberinto para Minos y este apresa al minotauro  dentro");
+end
+
+rule "Ariadna se enamora de Teseo"
+salience 2
+	when
+		$p1 : Personaje(nombre == "Teseo", estado == Estado.LIBRE, ubicacion == Ubicacion.ISLA_CRETA)
+		$p2 : Personaje(nombre == "Ariadna", estado == Estado.LIBRE, ubicacion == Ubicacion.ISLA_CRETA)
+		not Enamoramiento(personaje1==$p2, personaje2==$p1)
+	then
+		Enamoramiento en = new Enamoramiento($p2, $p1);
+		insert(en);
+		System.out.println("Teseo, en su paso por Creta, enamora a Ariadna");
+end
+
+rule "Minos se enfada con Dedalo e icaro"
+salience 2
+	when
+		$min: Criatura(nombre=="Minotauro", estado == Estado.MUERTO)
+		$p1 : Personaje(nombre == "Minos", estado == Estado.LIBRE)
+		$p2 : Personaje(nombre == "Icaro", estado == Estado.LIBRE)
+		$p3	: Personaje(nombre == "Dedalo", estado == Estado.LIBRE)
+		$p4 : Personaje(esHeroe==true, estado==Estado.LIBRE)
+		$o  : Objeto(nombre=="Cuerno de Minotauro", personaje==$p4)
+		not Enemistad(personaje1 == $p1, personaje2 == $p2)
+		not Enemistad(personaje1 == $p1, personaje2 == $p3)
+	then
+		Enemistad en1 = new Enemistad($p1, $p2);
+		Enemistad en2 = new Enemistad($p1, $p3);
+		insert(en1);
+		insert(en2);
+		System.out.println("Como "+$p4.getNombre()+" mata al minotauro y escapa, Minos se enfada con Dedalo e Icaro");
+end
+
+rule "Objetivo matar Minotauro"
+salience 2
+	when
+		$p : Personaje(esHeroe==true, ubicacion==Ubicacion.ATENAS)
+		$min: Criatura(nombre=="Minotauro", estado==Estado.PRESO)
+		$pos: PosesionPersonajeCapacidad(personaje==$p, capacidad==Capacidad.VUELO)
+		
+	then
+		Objetivo obj = new Objetivo($p,$min,4);
+		insert(obj);
+		modify($p){
+			setUbicacion(Ubicacion.ISLA_CRETA)
+		}
+		System.out.println("Como "+$p.getNombre()+" es un heroe de Atenas, se va a Creta a matar al minotauro");
+end
+
+rule "Heroe roba a Ariadna"
+salience 2
+	when
+		$p1 : Personaje(esHeroe==true, ubicacion==Ubicacion.ISLA_CRETA, nombre!="Teseo")
+		$pos : PosesionPersonajeCapacidad(personaje==$p1, capacidad==Capacidad.INVISIBILIDAD)
+		$p2 : Personaje(ubicacion==Ubicacion.ISLA_CRETA, nombre=="Ariadna")
+		$min: Criatura(nombre=="Minotauro", estado==Estado.PRESO)
+		$obj: Objetivo(personaje1==$p1, personaje2==$min, tipoObjetivo==4)
+		$o  : Obtenible(personaje==$p2)
+	then
+		Robo rb = new Robo($p1,$p2,$o);
+		insert(rb);
+		System.out.println($p1.getNombre()+" se hace pasar por Teseo y le roba el objeto "+$o.getNombre()+" a "+$p2.getNombre());
+end
+
+rule "Heroe entra en el laberinto"
+salience 2
+	when
+		$p1 : Personaje(esHeroe==true, ubicacion==Ubicacion.ISLA_CRETA)
+		$pos: PosesionPersonajeCapacidad(personaje==$p1, capacidad==Capacidad.ESCAPE)
+		$min: Criatura(nombre=="Minotauro", estado==Estado.PRESO)
+		$obj: Objetivo(personaje1==$p1, personaje2==$min, tipoObjetivo==4)
+	then
+		modify($p1){
+			setUbicacion(Ubicacion.LABERINTO_CRETA)
+		}
+		System.out.println($p1.getNombre() +" entra al laberinto para matar al minotauro con la confianza de salir con la capacidad ESCAPE");
+end
+
+rule "Combate a muerte entre el heroe y Minotauro"
+salience 2
+	when
+		$p1 : Personaje(esHeroe==true, ubicacion==Ubicacion.LABERINTO_CRETA)
+		$min: Criatura(nombre=="Minotauro", estado==Estado.PRESO)
+		$obj: Objetivo(personaje1==$p1, personaje2==$min, tipoObjetivo==4)
+	then
+		Combate com = new Combate($p1, $min);
+		insert(com);
+		delete($obj);
+		System.out.println("Hay un combate a muerte entre "+$p1.getNombre()+" y el minotauro");
+end
+
+rule "Persona escapa gracias a la ayuda de una persona con capacidad ESCAPE"
+salience 2
+	when
+		$p  : Personaje(ubicacion==Ubicacion.LABERINTO_CRETA)
+		$min: Criatura(nombre=="Minotauro", estado==Estado.MUERTO)
+		$pos: PosesionPersonajeCapacidad(personaje==$p, capacidad==Capacidad.ESCAPE)
+		$p2  : Personaje(ubicacion==Ubicacion.LABERINTO_CRETA, estado==Estado.PRESO)
+		not PosesionPersonajeCapacidad(personaje==$p2, capacidad==Capacidad.ESCAPE)
+	then
+		modify($p2){
+			setUbicacion(Ubicacion.ISLA_CRETA),
+			setEstado(Estado.LIBRE)
+		}
+		System.out.println($p.getNombre()+" libera a "+$p2.getNombre()+" del apresamiento del minotauro");
+end
+
+rule "Persona escapa con su capacidad de ESCAPE"
+salience 2
+	when
+		$p  : Personaje(ubicacion==Ubicacion.LABERINTO_CRETA)
+		$min: Criatura(nombre=="Minotauro", estado==Estado.MUERTO)
+		$pos: PosesionPersonajeCapacidad(personaje==$p, capacidad==Capacidad.ESCAPE) 
+	then
+		modify($p){
+			setUbicacion(Ubicacion.ISLA_CRETA),
+			setEstado(Estado.LIBRE)
+		}
+		System.out.println($p.getNombre()+" escapa del laberinto con su capacidad ESCAPE");
+end
+
+rule "Si Heracles tiene el enojo de Hera, mata a Megara"
+	when
+		$ub : Ubicacion()
+		$p : Personaje(esHeroe==true, estado==Estado.LIBRE, ubicacion==$ub)
+		$d : Dios(nombre=="Hera")
+		$e : Enojo(personaje1==$d, personaje2==$p)
+		$p2 : Personaje(nombre=="Megara", estado!=Estado.MUERTO, ubicacion==$ub)
+	then
+		Asesinato as = new Asesinato($p,$p2);
+		insert(as);
+		System.out.println("Como Hera esta enojada con "+$p.getNombre()+", "+$p.getNombre()+" mata a Megara");
+end
+
+rule "Creacion objetivos del rey"
+	when
+		$p : Personaje(esHeroe==true, estado==Estado.LIBRE, ubicacion==Ubicacion.DELFOS)
+		$r : Humano(nombre=="Rey Anfion", ubicacion==Ubicacion.DELFOS)
+		$p2 : Humano(nombre=="Megara", estado==Estado.MUERTO)
+		$m : Humano(nombre=="Minos")
+		$per : Semidios(nombre=="Perseo", estado==Estado.PRESO)
+		not Objetivo(personaje1==$p, personaje2==$m, tipoObjetivo==4)
+		not Objetivo(personaje1==$p, personaje2==$per, tipoObjetivo==1)
+	then
+		Objetivo ob1 = new Objetivo($p,$m,4);
+		insert(ob1);
+		Objetivo ob2 = new Objetivo($p,$per,1);
+		insert(ob2);
+		modify($p){
+			setUbicacion(Ubicacion.ISLA_CRETA);
+		}
+		System.out.println("El Rey Anfion encomienda a "+$p.getNombre()+" matar a Minos y liberar a Perseo");
+end
+
+rule "Combate con Minos"
+	when
+		$p : Personaje(esHeroe==true, estado==Estado.LIBRE, ubicacion==Ubicacion.ISLA_CRETA)
+		$m : Humano(nombre=="Minos", estado!=Estado.MUERTO)
+		$o : Objetivo(personaje1==$p, personaje2==$m, tipoObjetivo==4)
+	then
+		Combate c = new Combate($p,$m);
+		insert(c);
+		delete($o);
+end
+
+rule "Si mata a Minos, Teseo se hace su amigo"
+	when
+		$p : Personaje(esHeroe==true, estado==Estado.LIBRE, ubicacion==Ubicacion.ISLA_CRETA)
+		$t : Humano(nombre=="Teseo")
+		$m : Humano(nombre=="Minos", estado==Estado.MUERTO)
+		$a : Asesinato(personaje1==$p, personaje2==$m)
+		not Amistad(personaje1==$p, personaje2==$t)
+	then
+		Amistad am = new Amistad($p,$t);
+		insert(am);
+		System.out.println("Como "+$p.getNombre()+" mata a Minos, Teseo se hace su amigo");
+end
+
+rule "Si tiene el cuerno, se va a liberar a Perseo"
+	when
+		$p : Personaje(esHeroe==true, estado==Estado.LIBRE, ubicacion==Ubicacion.ISLA_CRETA)
+		$per : Semidios(nombre=="Perseo", estado==Estado.PRESO)
+		$o : Objeto(nombre=="Cuerno de Minotauro", personaje==$p)
+		$obj : Objetivo(personaje1==$p, personaje2==$per, tipoObjetivo==1)
+	then
+		modify($p){
+			setUbicacion($per.getUbicacion());
+		}
+		System.out.println("Como "+$p.getNombre()+" tiene el Cuerno de Minotauro, se va hacia la ubicacion de Perseo");
+end
+
+rule "liberacion de Perseo"
+	when
+		$ub : Ubicacion()
+		$p : Personaje(esHeroe==true, estado==Estado.LIBRE, ubicacion==$ub)
+		$per : Semidios(nombre=="Perseo", ubicacion==$ub, estado==Estado.PRESO)
+		$o : Objeto(nombre=="Cuerno de Minotauro", personaje==$p)
+		$obj : Objetivo(personaje1==$p, personaje2==$per, tipoObjetivo==1)
+		$k : Personaje(ubicacion==$ub)
+		$ap : Apresamiento(personaje1==$k, personaje2==$per)
+	then
+		Combate c = new Combate($p,$k);
+		insert(c);
+		delete($obj);
+		System.out.println($p.getNombre()+" combate con "+$k.getNombre());
+end
+
+rule "Perseo se hace amigo de quien lo libera de un apresamiento y le pide que rescate a andromeda por el"
+	when
+		$ub : Ubicacion()
+		$p : Personaje(esHeroe==true, estado==Estado.LIBRE, ubicacion==$ub)
+		$per : Semidios(nombre=="Perseo", estado==Estado.LIBRE, ubicacion==$ub)
+		$l : Liberacion(personaje1==$p, personaje2==$per)
+		$m : Criatura(nombre=="Medusa", estado!=Estado.MUERTO)
+		not Objetivo(personaje1==$p, personaje2==$m, tipoObjetivo==4)
+	then
+		Amistad am = new Amistad($p, $per);
+		insert(am);
+		Objetivo o = new Objetivo($p,$m,4);
+		insert(o);
+		System.out.println("Perseo se hace amigo de "+$p.getNombre()+" y le pide que rescate a Andromeda por el");
+end
+
+rule "Si Heracles tiene la cabeza de Ceto, va con el rey y le propone un intercambio"
+	when
+		$p : Semidios(nombre=="Heracles", esHeroe==true, estado==Estado.LIBRE)
+		$o : Objeto(nombre=="Cabeza de Ceto", personaje==$p)
+		$r : Humano(nombre=="Rey Anfion")
+		$h : Criatura(nombre=="Hidra")
+		$l : Localizacion(personaje1==$r, personaje2==$h)
+		not Localizacion(personaje1==$p, personaje2==$h)
+	then
+		modify($p){
+			setUbicacion($r.getUbicacion())
+		}
+		Intercambio i = new Intercambio($p,$r,$o,$l);
+		insert(i);
+		System.out.println("Si Heracles tiene la cabeza de Ceto, vuelve con el rey y le propone un intercambio");
+end
+
+rule "Si Heracles esta en la ubicacion de la Hidra de Lerna, combate contra ella"
+	when
+		$ub : Ubicacion()
+		$p : Personaje(nombre=="Heracles", esHeroe==true, estado==Estado.LIBRE, ubicacion==$ub)
+		$h : Criatura(nombre=="Hidra", estado==Estado.LIBRE, ubicacion==$ub)
+	then
+		Combate c = new Combate($p,$h);
+		insert(c);
+		System.out.println("Heracles combate a muerte contra la Hidra de Lerna");
+end
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,407 @@
+; Sun Nov 24 21:31:33 CET 2024
+; 
+;+ (version "3.4.8")
+;+ (build "Build 629")
+
+
+(defclass %3ACLIPS_TOP_LEVEL_SLOT_CLASS "Fake class to save top-level slot information"
+	(is-a USER)
+	(role abstract)
+	(single-slot amigo
+		(type INSTANCE)
+;+		(allowed-classes Personaje)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot obtenible
+		(type INSTANCE)
+;+		(allowed-classes Obtenible)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot obtenible2
+		(type INSTANCE)
+;+		(allowed-classes Obtenible)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot animal
+		(type INSTANCE)
+;+		(allowed-classes Animal)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot esHeroe
+		(type SYMBOL)
+		(allowed-values FALSE TRUE)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot loc
+		(type INSTANCE)
+;+		(allowed-classes Localizacion)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot ubicacion
+		(type SYMBOL)
+		(allowed-values OLIMPO ARGOS CUEVA_CETO CUEVA_MEDUSA CUEVA_GRAYAS ISLA_NINFAS ISLA_CRETA LABERINTO_CRETA ATENAS MAR_EGEO DELFOS CUEVA_HIDRA CUEVA_KRAKEN DESCONOCIDA)
+		(default DESCONOCIDA)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot capacidad
+		(type SYMBOL)
+		(allowed-values VUELO INVISIBILIDAD ESPEJO MATAR ALMACENAMIENTO ESCAPE)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot personaje
+		(type INSTANCE)
+;+		(allowed-classes Personaje)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot ataque
+		(type INTEGER)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot personaje2
+		(type INSTANCE)
+;+		(allowed-classes Personaje)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot nombre
+		(type STRING)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot dios
+		(type INSTANCE)
+;+		(allowed-classes Dios)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot ataque2
+		(type INTEGER)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot esMortal
+		(type SYMBOL)
+		(allowed-values FALSE TRUE)
+		(default TRUE)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot enemigo
+		(type INSTANCE)
+;+		(allowed-classes Personaje)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot estado
+		(type SYMBOL)
+		(allowed-values MUERTO PRESO LIBRE)
+		(default LIBRE)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot enamorado
+		(type INSTANCE)
+;+		(allowed-classes Personaje)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot tipoObjetivo
+		(type INTEGER)
+;+		(cardinality 1 1)
+		(create-accessor read-write)))
+
+(defclass Personaje "Entidad mitológica con identidad única, que puede ser un dios, semidios, criatura o humano, y participa en diversas acciones y relaciones."
+	(is-a USER)
+	(role abstract)
+	(single-slot esHeroe
+		(type SYMBOL)
+		(allowed-values FALSE TRUE)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot ataque
+		(type INTEGER)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot nombre
+		(type STRING)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot estado
+		(type SYMBOL)
+		(allowed-values MUERTO PRESO LIBRE)
+		(default LIBRE)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot esMortal
+		(type SYMBOL)
+		(allowed-values FALSE TRUE)
+		(default TRUE)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot ubicacion
+		(type SYMBOL)
+		(allowed-values OLIMPO ARGOS CUEVA_CETO CUEVA_MEDUSA CUEVA_GRAYAS ISLA_NINFAS ISLA_CRETA LABERINTO_CRETA ATENAS MAR_EGEO DELFOS CUEVA_HIDRA CUEVA_KRAKEN DESCONOCIDA)
+		(default DESCONOCIDA)
+;+		(cardinality 1 1)
+		(create-accessor read-write)))
+
+(defclass Dios "Ser inmortal con poderes divinos, influencia sobre el mundo y los destinos de los personajes, y objeto de culto por parte de los humanos."
+	(is-a Personaje)
+	(role concrete)
+	(single-slot ataque
+		(type INTEGER)
+		(default 100)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot esMortal
+		(type SYMBOL)
+		(allowed-values FALSE TRUE)
+		(default FALSE)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot ubicacion
+		(type SYMBOL)
+		(allowed-values OLIMPO ARGOS CUEVA_CETO CUEVA_MEDUSA CUEVA_GRAYAS ISLA_NINFAS ISLA_CRETA LABERINTO_CRETA ATENAS MAR_EGEO DELFOS CUEVA_HIDRA CUEVA_KRAKEN DESCONOCIDA)
+		(default OLIMPO)
+;+		(cardinality 1 1)
+		(create-accessor read-write)))
+
+(defclass Semidios "Hijo de un dios y un humano, con habilidades extraordinarias y capacidades por encima de las humanas, aunque sujeto a mortalidad y desafíos."
+	(is-a Personaje)
+	(role concrete))
+
+(defclass Humano "Ser mortal sin poderes sobrenaturales, vulnerable ante los caprichos de los dioses y criaturas, y en busca de favor o protección divina."
+	(is-a Personaje)
+	(role concrete))
+
+(defclass Criatura "Ser sobrenatural o bestial, con características especiales o habilidades mágicas, que puede ser tanto una amenaza como un aliado para otros personajes."
+	(is-a Personaje)
+	(role concrete))
+
+(defclass Obtenible "Elemento que un personaje puede adquirir como objetos o animales."
+	(is-a USER)
+	(role abstract)
+	(single-slot personaje
+		(type INSTANCE)
+;+		(allowed-classes Personaje)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot ataque
+		(type INTEGER)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot nombre
+		(type STRING)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot ubicacion
+		(type SYMBOL)
+		(allowed-values OLIMPO ARGOS CUEVA_CETO CUEVA_MEDUSA CUEVA_GRAYAS ISLA_NINFAS ISLA_CRETA LABERINTO_CRETA ATENAS MAR_EGEO DELFOS CUEVA_HIDRA CUEVA_KRAKEN DESCONOCIDA)
+		(default DESCONOCIDA)
+;+		(cardinality 1 1)
+		(create-accessor read-write)))
+
+(defclass Objeto "Representa un artefacto o herramienta con valor o poder especial en el contexto mitológico."
+	(is-a Obtenible)
+	(role concrete))
+
+(defclass Animal "Entidad que puede tener o no poderes sobrenaturales o mágicos. Pueden actuar como aliados, adversarios o pruebas para los personajes en su aventura."
+	(is-a Obtenible)
+	(role concrete)
+	(single-slot estado
+		(type SYMBOL)
+		(allowed-values MUERTO PRESO LIBRE)
+		(default LIBRE)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot esMortal
+		(type SYMBOL)
+		(allowed-values FALSE TRUE)
+		(default TRUE)
+;+		(cardinality 0 1)
+		(create-accessor read-write)))
+
+(defclass PosesionCapacidad "Relación entre un personaje y habilidades especiales que posee."
+	(is-a USER)
+	(role abstract)
+	(single-slot capacidad
+		(type SYMBOL)
+		(allowed-values VUELO INVISIBILIDAD ESPEJO MATAR ALMACENAMIENTO ESCAPE)
+;+		(cardinality 0 1)
+		(create-accessor read-write)))
+
+(defclass PosesionObtenibleCapacidad "Relación que indica que un objeto posee una habilidad o capacidad especial."
+	(is-a PosesionCapacidad)
+	(role concrete)
+	(single-slot obtenible
+		(type INSTANCE)
+;+		(allowed-classes Obtenible)
+;+		(cardinality 0 1)
+		(create-accessor read-write)))
+
+(defclass PosesionPersonajeCapacidad "Relación en la que un personaje posee una capacidad debido a la posesión de un objeto o personaje."
+	(is-a PosesionCapacidad)
+	(role concrete)
+	(single-slot personaje
+		(type INSTANCE)
+;+		(allowed-classes Personaje)
+;+		(cardinality 0 1)
+		(create-accessor read-write)))
+
+(defclass Accion "Evento significativo realizado por un personaje hacia otro personaje"
+	(is-a USER)
+	(role abstract)
+	(single-slot personaje
+		(type INSTANCE)
+;+		(allowed-classes Personaje)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot personaje2
+		(type INSTANCE)
+;+		(allowed-classes Personaje)
+;+		(cardinality 0 1)
+		(create-accessor read-write)))
+
+(defclass Apresamiento "Acción en la que un personaje captura a otro, generalmente con fines de castigo, restricción o imposición de poder."
+	(is-a Accion)
+	(role concrete)
+	(single-slot animal
+		(type INSTANCE)
+;+		(allowed-classes Animal)
+;+		(cardinality 0 1)
+		(create-accessor read-write)))
+
+(defclass Asesinato "Acto en el cual un personaje termina con la vida de otro."
+	(is-a Accion)
+	(role concrete)
+	(single-slot animal
+		(type INSTANCE)
+;+		(allowed-classes Animal)
+;+		(cardinality 0 1)
+		(create-accessor read-write)))
+
+(defclass Robo "Acto en el que un personaje toma un objeto valioso o sagrado de otro, usualmente sin su consentimiento, generando conflictos o enfrentamientos."
+	(is-a Accion)
+	(role concrete)
+	(single-slot obtenible
+		(type INSTANCE)
+;+		(allowed-classes Obtenible)
+;+		(cardinality 0 1)
+		(create-accessor read-write)))
+
+(defclass Intercambio "Acción en la que dos personajes intercambian objetos u otros beneficios, a menudo como parte de un acuerdo o pacto."
+	(is-a Accion)
+	(role concrete)
+	(single-slot obtenible
+		(type INSTANCE)
+;+		(allowed-classes Obtenible)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot obtenible2
+		(type INSTANCE)
+;+		(allowed-classes Obtenible)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot loc
+		(type INSTANCE)
+;+		(allowed-classes Localizacion)
+;+		(cardinality 0 1)
+		(create-accessor read-write)))
+
+(defclass Liberacion "Acto heroico de liberar a un personaje que estaba preso."
+	(is-a Accion)
+	(role concrete))
+
+(defclass Localizacion "Acción de encontrar o situar a un personaje en un lugar específico, generalmente como parte de una búsqueda o de un acto de vigilancia."
+	(is-a Accion)
+	(role concrete))
+
+(defclass Combate "Enfrentamiento entre personajes con o sin el uso de obtenibles."
+	(is-a Accion)
+	(role concrete)
+	(single-slot ataque
+		(type INTEGER)
+;+		(cardinality 1 1)
+		(create-accessor read-write))
+	(single-slot ataque2
+		(type INTEGER)
+;+		(cardinality 1 1)
+		(create-accessor read-write)))
+
+(defclass TratoPersonaje "Acuerdo o interacción entre personajes, como alianzas o rivalidades."
+	(is-a USER)
+	(role abstract)
+	(single-slot personaje
+		(type INSTANCE)
+;+		(allowed-classes Personaje)
+;+		(cardinality 0 1)
+		(create-accessor read-write)))
+
+(defclass Amistad "Relación positiva entre personajes basada en apoyo mutuo."
+	(is-a TratoPersonaje)
+	(role concrete)
+	(single-slot amigo
+		(type INSTANCE)
+;+		(allowed-classes Personaje)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot animal
+		(type INSTANCE)
+;+		(allowed-classes Animal)
+;+		(cardinality 0 1)
+		(create-accessor read-write)))
+
+(defclass Enemistad "Rivalidad o conflicto entre personajes con objetivos opuestos."
+	(is-a TratoPersonaje)
+	(role concrete)
+	(single-slot enemigo
+		(type INSTANCE)
+;+		(allowed-classes Personaje)
+;+		(cardinality 1 1)
+		(create-accessor read-write)))
+
+(defclass Enamoramiento "Relación romántica que impulsa acciones entre personajes."
+	(is-a TratoPersonaje)
+	(role concrete)
+	(single-slot enamorado
+		(type INSTANCE)
+;+		(allowed-classes Personaje)
+;+		(cardinality 1 1)
+		(create-accessor read-write)))
+
+(defclass TratoDios "Interacción entre un dios y un personaje, como favores o enojos."
+	(is-a TratoPersonaje)
+	(role abstract)
+	(single-slot dios
+		(type INSTANCE)
+;+		(allowed-classes Dios)
+;+		(cardinality 1 1)
+		(create-accessor read-write)))
+
+(defclass Enojo "Estado en el que un dios manifiesta su descontento o ira hacia un personaje o una acción, resultando en castigos o maldiciones."
+	(is-a TratoDios)
+	(role concrete))
+
+(defclass Favor "Beneficio o protección otorgada por un dios a un personaje, generalmente en forma de habilidades u objetos especiales."
+	(is-a TratoDios)
+	(role concrete))
+
+(defclass Objetivo "Meta que guía las acciones de los personajes en la narrativa."
+	(is-a USER)
+	(role concrete)
+	(single-slot personaje
+		(type INSTANCE)
+;+		(allowed-classes Personaje)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot obtenible
+		(type INSTANCE)
+;+		(allowed-classes Obtenible)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot personaje2
+		(type INSTANCE)
+;+		(allowed-classes Personaje)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot capacidad
+		(type SYMBOL)
+		(allowed-values VUELO INVISIBILIDAD ESPEJO MATAR ALMACENAMIENTO ESCAPE)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot tipoObjetivo
+		(type INTEGER)
+;+		(cardinality 1 1)
+		(create-accessor read-write)))
